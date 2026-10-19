@@ -112,6 +112,7 @@ export class GameSession {
     for (const event of events) this.handle(event, state);
 
     this.terrain.update(state);
+    this.terrain.fadeOccluders(state.players, dt);
     this.cables.update(state);
     this.actors.sync(state, this.renderer.camera, dt, this.settings.reduceMotion);
     this.effects.showHint(state);

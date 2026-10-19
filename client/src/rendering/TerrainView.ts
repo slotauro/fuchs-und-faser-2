@@ -48,6 +48,8 @@ export class TerrainView {
   private readonly windowMaterials = new Map<string, THREE.MeshStandardMaterial[]>();
   private readonly socketLeds = new Map<string, THREE.MeshStandardMaterial[]>();
   private readonly onlineHouses = new Set<string>();
+  /** Hohe Objekte, die Figuren verdecken können, mit eigenen (ausblendbaren) Materialien. */
+  private readonly occluders: { object: THREE.Object3D; materials: THREE.Material[]; opacity: number; depth: number; halfWidth: number }[] = [];
   private lastVersion = -1;
   private readonly matrix = new THREE.Matrix4();
 
@@ -120,6 +122,7 @@ export class TerrainView {
       if (obj) {
         obj.position.set(cx, 0, cz);
         this.group.add(obj);
+        if (cell.kind === 'tree') this.addOccluder(obj, 2.4, 0.8);
       }
     });
     // Rand: Bäume in lockerer, deterministischer Verteilung.
@@ -135,6 +138,7 @@ export class TerrainView {
         tree.rotation.y = hash(seed + 3) * Math.PI * 2;
         tree.scale.setScalar(0.8 + hash(seed + 4) * 0.5);
         this.group.add(tree);
+        this.addOccluder(tree, 2.4, 0.8);
       }
     }
     const plane = new THREE.Mesh(
@@ -162,7 +166,11 @@ export class TerrainView {
     model.position.set(cx, 0, cz);
     model.rotation.y = facing;
     this.group.add(model);
-    this.windowMaterials.set(house.id, this.cloneMaterials(model, 'ff_window'));
+    // Erst ausblendbare Kopien anlegen, dann die Fenster je Haus eigenständig machen.
+    this.addOccluder(model, 3.2, 1.2);
+    const windows = this.cloneMaterials(model, 'ff_window');
+    this.windowMaterials.set(house.id, windows);
+    this.occluders.at(-1)!.materials.push(...windows);
 
     const box = assets.instance('socket');
     const ax = Math.abs(dx) > Math.abs(dz) ? Math.sign(dx) : 0;
@@ -172,6 +180,41 @@ export class TerrainView {
     box.rotation.y = facing;
     this.group.add(box);
     this.socketLeds.set(house.id, this.cloneMaterials(box, 'ff_socket_led'));
+  }
+
+  /**
+   * Merkt sich ein hohes Objekt, das Figuren dahinter verdecken kann. `depth` ist, wie weit
+   * hinter dem Objekt (in -Z) eine Figur noch verdeckt wird, `halfWidth` die halbe Breite.
+   */
+  private addOccluder(object: THREE.Object3D, depth: number, halfWidth: number): void {
+    const materials: THREE.Material[] = [];
+    object.traverse((o) => {
+      if (!(o instanceof THREE.Mesh)) return;
+      const mats = (Array.isArray(o.material) ? o.material : [o.material]).map((m: THREE.Material) => {
+        const copy = m.clone();
+        copy.transparent = true;
+        materials.push(copy);
+        return copy;
+      });
+      o.material = Array.isArray(o.material) ? mats : mats[0]!;
+    });
+    this.occluders.push({ object, materials, opacity: 1, depth, halfWidth });
+  }
+
+  /** Blendet Bäume und Häuser halbtransparent aus, solange sie eine Figur verdecken. */
+  fadeOccluders(players: { x: number; z: number }[], dt: number): void {
+    for (const occ of this.occluders) {
+      const { x, z } = occ.object.position;
+      const hides = players.some((p) => Math.abs(p.x - x) < occ.halfWidth + 0.3 && z - p.z > -0.2 && z - p.z < occ.depth);
+      const target = hides ? 0.3 : 1;
+      if (Math.abs(occ.opacity - target) < 0.01) continue;
+      occ.opacity += (target - occ.opacity) * Math.min(1, dt * 8);
+      for (const m of occ.materials) {
+        m.opacity = occ.opacity;
+        // Undurchsichtig zeichnen, sobald voll sichtbar (spart Sortierprobleme).
+        m.depthWrite = occ.opacity > 0.95;
+      }
+    }
   }
 
   /** Gibt einem Modell eigene Kopien der Materialien mit diesem Namen. */
