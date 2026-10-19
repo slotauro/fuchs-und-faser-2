@@ -4,6 +4,9 @@ import { CHARACTER_MODELS, type AssetManager } from '../assets/AssetManager';
 
 type Clip = 'Idle' | 'Walk' | 'Dig';
 
+/** Abspieltempo der Grab-Animation, passend zu den halbierten Grabzeiten. */
+const DIG_ANIMATION_SPEED = 2;
+
 /** Farben der Spielerringe; die eigene Figur hat immer den cremefarbenen Ring. */
 export const ANIMAL_COLORS = {
   fox: '#ff8a1f',
@@ -35,6 +38,8 @@ class Actor {
         this.actions.set(clip.name, this.mixer.clipAction(clip));
       }
     }
+    // Graben ist kurz, die Schaufel soll im gleichen Takt schwingen.
+    this.actions.get('Dig')?.setEffectiveTimeScale(DIG_ANIMATION_SPEED);
 
     // Kabelrolle wird vor dem Bauch getragen.
     this.coil = assets.instance('cableCoil');

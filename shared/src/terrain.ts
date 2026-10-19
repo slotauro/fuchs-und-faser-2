@@ -7,9 +7,9 @@ export const CARRY_CAPACITY = 6;
 
 /** Dauer der Arbeiten in Sekunden. */
 export const DURATION = {
-  digGrass: 1.0,
-  digRoots: 2.5,
-  digGravel: 0.8,
+  digGrass: 0.5,
+  digRoots: 1.25,
+  digGravel: 0.4,
   breakRock: 3.0,
   shaft: 3.0,
   lay: 0.35,
