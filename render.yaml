@@ -1,0 +1,14 @@
+# Render-Blueprint: ein Node-Dienst liefert den gebauten Client und Socket.IO aus.
+# Räume liegen im Arbeitsspeicher, daher genau eine Instanz.
+services:
+  - type: web
+    name: fuchs-und-faser-2
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
