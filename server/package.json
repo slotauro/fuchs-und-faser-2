@@ -1,0 +1,19 @@
+{
+  "name": "@ff/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "NODE_ENV=production tsx src/index.ts"
+  },
+  "dependencies": {
+    "@ff/shared": "*",
+    "socket.io": "4.8.4",
+    "tsx": "4.23.15"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "socket.io-client": "4.8.4"
+  }
+}

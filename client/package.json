@@ -1,0 +1,20 @@
+{
+  "name": "@ff/client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p . && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ff/shared": "*",
+    "socket.io-client": "4.8.4",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.185.4",
+    "vite": "5.4.21"
+  }
+}

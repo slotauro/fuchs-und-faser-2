@@ -1,0 +1,22 @@
+{
+  "name": "fiber-frenzy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "3D-Koop-Browsergame: Tiere schließen Häuser ans Glasfasernetz an",
+  "workspaces": ["shared", "client", "server"],
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c yellow,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "test": "vitest run",
+    "typecheck": "tsc -p shared && tsc -p client && tsc -p server",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "concurrently": "10.0.6",
+    "typescript": "5.9.3",
+    "vitest": "2.1.9"
+  }
+}
