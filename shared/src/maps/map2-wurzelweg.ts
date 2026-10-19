@@ -4,7 +4,7 @@ export const map2: MapDef = {
   id: 'wurzelweg',
   name: 'Der Wurzelweg',
   order: 'Zwei Häuser hinter Wurzeln und Straße. Das Leerrohr spart Grabarbeit.',
-  timeLimit: 210,
+  timeLimit: 420,
   stationStock: 40,
   rows: [
     'TTT..........TTT',

@@ -4,7 +4,7 @@ export const map1: MapDef = {
   id: 'erste-baustelle',
   name: 'Die erste Baustelle',
   order: 'Schließe das Haus an. Der Felsriegel lässt sich brechen oder umgehen.',
-  timeLimit: 150,
+  timeLimit: 300,
   stationStock: 30,
   rows: [
     'TT..........TT',

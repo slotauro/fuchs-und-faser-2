@@ -4,7 +4,7 @@ export const map3: MapDef = {
   id: 'bachsiedlung',
   name: 'Die Bachsiedlung',
   order: 'Drei Häuser, ein Bach. Kabel queren den Bach nur über die Brücken.',
-  timeLimit: 270,
+  timeLimit: 540,
   stationStock: 55,
   rows: [
     'TTT.....~~.....TTT',
